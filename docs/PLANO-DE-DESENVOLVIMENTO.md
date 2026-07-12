@@ -2,9 +2,14 @@
 
 App nativo iOS de controle de treino de academia, **offline-first**.
 
+**Versionamento de escopo:**
+- **v1:** fichas, blocos, agenda, execução com timer, catálogo com detalhes (G1–G7)
+- **v2:** histórico detalhado de sessões (G8) + export/import local JSON/CSV (G13)
+- **v3:** métricas e progresso (G9–G11) + sync iCloud/CloudKit (G12)
+
 - **Stack:** Swift 5.10+, SwiftUI, SwiftData, Swift Charts, iOS 17+
 - **Arquitetura:** MVVM (Views SwiftUI → ViewModels `@Observable` → camada de domínio/repositórios → SwiftData)
-- **Rede:** exclusivamente CloudKit (iCloud privado, v2). Nenhum backend próprio, nenhuma API de terceiros, nenhuma telemetria.
+- **Rede:** exclusivamente CloudKit (iCloud privado, v3). Nenhum backend próprio, nenhuma API de terceiros, nenhuma telemetria.
 
 ---
 
@@ -17,7 +22,7 @@ O modelo separa rigidamente duas árvores:
 - **Planejado (Plano):** `WorkoutPlan → WorkoutBlock → PlannedExercise → PlannedSet` — o que o usuário *pretende* fazer. Editável a qualquer momento.
 - **Realizado (Histórico):** `WorkoutSession → SessionItem → PerformedSet` — o que *de fato* aconteceu em uma execução. Imutável após o fim da sessão (exceto correções manuais explícitas).
 
-A sessão **copia por valor** os dados planejados no momento do início (snapshot desnormalizado: nome do exercício, alvos de séries/reps/carga). Assim, editar ou apagar uma ficha nunca corrompe o histórico — requisito essencial para as métricas da v2 (G8–G11).
+A sessão **copia por valor** os dados planejados no momento do início (snapshot desnormalizado: nome do exercício, alvos de séries/reps/carga). Assim, editar ou apagar uma ficha nunca corrompe o histórico — requisito essencial para o histórico da v2 (G8) e as métricas da v3 (G9–G11).
 
 `Exercise` é a entidade de catálogo (seed do bundle + exercícios do usuário), referenciada por ambas as árvores.
 
@@ -34,7 +39,7 @@ A sessão **copia por valor** os dados planejados no momento do início (snapsho
 | **WorkoutSession** | `id`, `startedAt`, `endedAt?`, `status` (`inProgress`, `completed`, `abandoned`), `planId: UUID?` (ref fraca), `planNameSnapshot: String`, `notes?`, `totalRestActual: TimeInterval` | `planNameSnapshot` preserva histórico se a ficha for renomeada/apagada. Sessão `inProgress` persistida permite retomar após kill do app. |
 | **SessionItem** | `id`, `orderIndex`, `blockKindSnapshot`, `exerciseId: UUID?` (ref fraca ao catálogo), `exerciseNameSnapshot`, `muscleGroupsSnapshot`, `skipped: Bool` | Um por exercício executado, agrupável por bloco via `blockIndexSnapshot`. |
 | **PerformedSet** | `id`, `orderIndex`, `reps: Int`, `weight: Double`, `targetRepsSnapshot?`, `targetWeightSnapshot?`, `restPlanned: TimeInterval?`, `restActual: TimeInterval?`, `completedAt: Date`, `skipped: Bool` | Grava alvo *e* realizado → aderência e "vs. sessão anterior" (G10, G11). |
-| **PersonalRecord** (v2, materializada) | `id`, `exerciseId`, `kind` (`maxWeight`, `maxVolumeSet`, `estimated1RM`), `value`, `date`, `sessionId` | Cache derivado do histórico; recalculável do zero. |
+| **PersonalRecord** (v3, materializada) | `id`, `exerciseId`, `kind` (`maxWeight`, `maxVolumeSet`, `estimated1RM`), `value`, `date`, `sessionId` | Cache derivado do histórico; recalculável do zero. |
 | **AppSettings** | singleton local: `iCloudSyncEnabled`, `defaultRest`, `weightUnit`, `hapticsEnabled`… | Fora do store sincronizado (UserDefaults ou store local separado). |
 
 ### 1.3 Diagrama textual
@@ -49,12 +54,12 @@ WorkoutPlan 1─* WorkoutBlock 1─* PlannedExercise 1─* PlannedSet     [PLANE
 ScheduleEntry (*─1 WorkoutPlan)   [AGENDA]
 
 WorkoutSession 1─* SessionItem 1─* PerformedSet                     [REALIZADO]
-WorkoutSession/PerformedSet ──derivam──▶ PersonalRecord, métricas   [v2]
+WorkoutSession/PerformedSet ──derivam──▶ PersonalRecord, métricas   [v3]
 ```
 
 ### 1.4 Restrições que o CloudKit impõe ao schema (desenhar já na v1)
 
-Para `NSPersistentCloudKitContainer` / SwiftData + CloudKit funcionar sem migração destrutiva na v2:
+Para `NSPersistentCloudKitContainer` / SwiftData + CloudKit funcionar sem migração destrutiva na v3:
 
 1. **Todos os atributos opcionais ou com valor default** — CloudKit não suporta atributos obrigatórios sem default.
 2. **Sem `@Attribute(.unique)` / unique constraints** — CloudKit não suporta unicidade; deduplicação (ex.: seed de exercícios) deve ser feita em código, por `seedSlug`.
@@ -92,13 +97,13 @@ Tab 3 — Agenda
  ├─ Grade semanal Seg–Dom com fichas alocadas
  └─ Atribuir/remover ficha por dia (menu de contexto ou sheet)
 
-Tab 4 — Progresso (v2; na v1 mostra Histórico simples)
- ├─ Histórico: lista de sessões → SessionDetailView (séries realizadas vs. alvo)
- ├─ Gráficos (Swift Charts): volume, 1RM estimado, frequência, streak
- ├─ PRs por exercício
+Tab 4 — Histórico (v1 simples; v2 detalhado; vira "Progresso" na v3)
+ ├─ Histórico: lista de sessões → SessionDetailView (séries realizadas vs. alvo)  [v2]
+ ├─ Gráficos (Swift Charts): volume, 1RM estimado, frequência, streak  [v3]
+ ├─ PRs por exercício  [v3]
  └─ Ajustes ⚙️
-      ├─ Sync iCloud (toggle + estado: última sync, erro, conta indisponível)
-      ├─ Exportar/Importar JSON/CSV (share sheet / file importer)  [G13]
+      ├─ Sync iCloud (toggle + estado: última sync, erro, conta indisponível)  [v3]
+      ├─ Exportar/Importar JSON/CSV (share sheet / file importer)  [G13, v2]
       └─ unidade de peso, descanso padrão, notificações, sobre
 
 Modal global — WorkoutRunnerView (execução, G4/G7)
@@ -164,7 +169,7 @@ skipSet/skipItem: grava PerformedSet/SessionItem com skipped = true (G8) e
    segue as mesmas regras de avanço
 
 finished ──▶ SessionSummary; endedAt = now; status = .completed;
-   recalcula PRs (v2); volta ao app
+   recalcula PRs (v3); volta ao app
 
 abandon ──▶ status = .abandoned (histórico mantém o que foi feito)
 ```
@@ -173,7 +178,7 @@ abandon ──▶ status = .abandoned (histórico mantém o que foi feito)
 
 ---
 
-## 4. Métricas da v2
+## 4. Métricas da v3
 
 Todas derivadas exclusivamente de `WorkoutSession`/`SessionItem`/`PerformedSet` (séries com `skipped == true` e `isWarmup == true` são excluídas dos cálculos de volume/PR; puladas contam para aderência).
 
@@ -191,11 +196,13 @@ Todas derivadas exclusivamente de `WorkoutSession`/`SessionItem`/`PerformedSet` 
 | PR (destaque automático) | ao fim de cada sessão, compara melhores valores da sessão com `PersonalRecord`; se superou → atualiza + badge/celebração | evento | **Materializada** (tabela `PersonalRecord`), recalculável do zero a partir do histórico (idempotente — importante pós-sync/import) |
 | Comparação com sessão anterior | para cada exercício da sessão, busca a última sessão contendo o mesmo `exerciseId` e diffa série a série (carga, reps, volume) | por exercício, em tempo real no runner | Sob demanda no início da sessão (1 fetch por exercício, pré-carregado) |
 
-**Regra geral:** materializar apenas o que é (a) caro de recomputar em listas (volume/sessão) ou (b) precisa de detecção de evento (PRs). Todo o resto é calculado sob demanda — o volume de dados de um usuário de academia (centenas de sessões) é pequeno para SwiftData + agregação em memória. Tudo que é materializado deve ser **recalculável do zero** (função `rebuildDerivedData()`), executada após import (G13) ou merge de sync (G12).
+**Regra geral:** materializar apenas o que é (a) caro de recomputar em listas (volume/sessão) ou (b) precisa de detecção de evento (PRs). Todo o resto é calculado sob demanda — o volume de dados de um usuário de academia (centenas de sessões) é pequeno para SwiftData + agregação em memória. Tudo que é materializado deve ser **recalculável do zero** (função `rebuildDerivedData()`), executada após import (G13, v2) ou merge de sync (G12, v3).
+
+Embora as métricas só sejam exibidas na v3, os dados brutos de que dependem (`restActual`, snapshots de alvo, `skipped`, `muscleGroupsSnapshot`) são capturados desde a v1/v2 — o histórico acumulado fica retroativamente disponível para os gráficos quando a v3 chegar.
 
 ---
 
-## 5. Estratégia de sync (v2 — iCloud/CloudKit)
+## 5. Estratégia de sync (v3 — iCloud/CloudKit)
 
 **Mecanismo:** SwiftData com `cloudKitDatabase: .private` (equivalente a `NSPersistentCloudKitContainer`), banco privado do usuário, zona única. Nenhum servidor próprio.
 
@@ -229,10 +236,10 @@ LiftPlus/
 │     ├─ MetricsService     # fórmulas da §4 (funções puras sobre o histórico)
 │     ├─ PRService          # detecção/materialização de recordes
 │     ├─ ExportService      # JSON/CSV (Codable DTOs versionados)  [v2]
-│     └─ SyncMonitor        # estados de sync p/ Ajustes            [v2]
+│     └─ SyncMonitor        # estados de sync p/ Ajustes            [v3]
 ├─ Features/                # 1 pasta por feature: View(s) + ViewModel
 │  ├─ Today/  ├─ Plans/  ├─ PlanEditor/  ├─ ExerciseCatalog/
-│  ├─ Schedule/  ├─ Runner/  ├─ History/  ├─ Progress/ (v2)  └─ Settings/
+│  ├─ Schedule/  ├─ Runner/  ├─ History/  ├─ Progress/ (v3)  └─ Settings/
 ├─ UI/                      # DS: cores semânticas, tipografia, RestRing,
 │                           #   SetRow, BigActionButton, EmptyState
 ├─ Resources/               # seed_exercises.json, assets, Localizable
@@ -253,10 +260,11 @@ Regras: Views não tocam SwiftData diretamente (sempre via ViewModel/serviço); 
 | **F0 — Fundação** (1–2 sem) | Projeto, CI local, schema SwiftData completo (já CloudKit-compliant, §1.4), seed de exercícios, design system base, esqueleto de navegação | G6 (base) |
 | **F1 — MVP** (2–3 sem) | CRUD de fichas com blocos (single/bi/tri/circuito), catálogo com busca + ExerciseDetailSheet, agenda semanal, **runner completo** com timer background + notificação + avanço automático, gravação de sessão no histórico (dados já no formato G8), lista de histórico simples | G1–G7, G8 (captura) |
 | **F1.5 — Polimento v1** (1–2 sem) | VoiceOver/Dynamic Type auditados, haptics, retomada de sessão pós-kill, empty states, edição de sessão em andamento (ajustar carga/reps), arquivamento de fichas — **release v1 na App Store** | G7 refinado |
-| **F2 — Progresso** (2–3 sem) | Aba Progresso: Swift Charts (volume, 1RM, frequência, streak, aderência, descanso real×planejado), PRs com celebração, comparação com sessão anterior no runner, export/import JSON/CSV | G9, G10, G11, G13 |
-| **F3 — Sync** (2 sem + beta) | Toggle iCloud, container CloudKit, SyncMonitor/UI de estados, dedupe pós-merge, `rebuildDerivedData`, testes multi-device via TestFlight — **release v2** | G12 |
+| **F2 — Histórico + Backup (v2)** (1–2 sem) | Histórico detalhado: SessionDetailView (realizado vs. alvo, séries puladas, duração, descanso real), export/import JSON/CSV via share sheet / file importer — **release v2** | G8 (exibição), G13 |
+| **F3 — Progresso (v3)** (2–3 sem) | Aba Progresso: Swift Charts (volume, 1RM, frequência, streak, aderência, descanso real×planejado), PRs com celebração, comparação com sessão anterior no runner | G9, G10, G11 |
+| **F4 — Sync (v3)** (2 sem + beta) | Toggle iCloud, container CloudKit, SyncMonitor/UI de estados, dedupe pós-merge, `rebuildDerivedData`, testes multi-device via TestFlight — **release v3** | G12 |
 
-F2 antes de F3 deliberadamente: métricas entregam valor imediato e validam o modelo de histórico antes de congelar o schema no CloudKit (schema publicado em produção é praticamente imutável).
+Sync (F4) por último deliberadamente: histórico (F2) e métricas (F3) entregam valor imediato e validam o modelo de dados com uso real antes de congelar o schema no CloudKit (schema publicado em produção é praticamente imutável).
 
 ---
 
@@ -266,7 +274,7 @@ F2 antes de F3 deliberadamente: métricas entregam valor imediato e validam o mo
 
 1. **SwiftData + CloudKit em iOS 17** é a parte mais imatura da stack (bugs conhecidos de sync, sem controle fino de merge). *Mitigação:* schema compliant desde F0; sync isolado atrás do toggle; plano B documentado de migrar a camada de persistência para Core Data + `NSPersistentCloudKitContainer` mantendo os mesmos modelos de domínio — por isso Views nunca tocam SwiftData diretamente.
 2. **Confiabilidade do timer em background:** notificação local pode ser silenciada (Foco/permissão negada). *Mitigação:* relógio por data absoluta (§3) garante correção ao reabrir; onboarding pede permissão de notificação com explicação; fallback visual claro.
-3. **Schema CloudKit é imutável em produção:** erro de modelagem custa caro. *Mitigação:* campos de reserva não; disciplina de mudanças apenas aditivas; validar modelo com dados reais durante F1–F2 antes do deploy CloudKit.
+3. **Schema CloudKit é imutável em produção:** erro de modelagem custa caro. *Mitigação:* campos de reserva não; disciplina de mudanças apenas aditivas; validar modelo com dados reais durante F1–F3 antes do deploy CloudKit.
 4. **Deduplicação sem unique constraints** (seed em múltiplos devices). *Mitigação:* `seedSlug` + dedupe idempotente no import.
 5. **Curadoria do seed de exercícios** (conteúdo de instruções/erros comuns, sem API de terceiros): esforço editorial, não técnico. *Mitigação:* começar com ~80–120 exercícios essenciais; estrutura JSON versionada para crescer.
 
@@ -278,6 +286,6 @@ F2 antes de F3 deliberadamente: métricas entregam valor imediato e validam o mo
 | D2 | Streak: qualquer sessão na semana ou aderência mínima ao plano? | ≥ 1 sessão/semana (simples e motivador); aderência é métrica separada |
 | D3 | Fórmula de 1RM (Epley vs. Brzycki) e teto de reps | Epley, marcar como estimativa acima de 12 reps |
 | D4 | Unidade: kg/lb com conversão ou armazenar sempre kg? | Armazenar kg canônico; converter na UI |
-| D5 | Live Activity / Dynamic Island para o timer de descanso | Fora do escopo v1; forte candidato para v2.1 (mesmo `restEndDate` alimenta a Activity) |
+| D5 | Live Activity / Dynamic Island para o timer de descanso | Fora do escopo v1; candidato para v2/v3 (mesmo `restEndDate` alimenta a Activity) |
 | D6 | Apple Watch companion | Fora de escopo; modelo de dados já comporta (sessões por device) |
 | D7 | Mídia dos exercícios: ilustrações estáticas vs. vídeo no bundle | Ilustrações/fotos estáticas (tamanho de bundle e custo de produção) |
