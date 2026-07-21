@@ -1,0 +1,182 @@
+[
+  {
+    "slug": "supino-reto-barra",
+    "name": "Supino reto com barra",
+    "primaryMuscle": "chest",
+    "secondaryMuscles": ["triceps", "shoulders"],
+    "equipment": "barbell",
+    "instructions": "Deite no banco com os pés firmes no chão. Segure a barra com pegada um pouco mais aberta que os ombros. Desça a barra controladamente até tocar o peito na linha dos mamilos e empurre de volta até estender os cotovelos, sem travá-los.",
+    "commonMistakes": "Arquear demais a lombar; quicar a barra no peito; abrir excessivamente os cotovelos, sobrecarregando o ombro."
+  },
+  {
+    "slug": "supino-inclinado-halteres",
+    "name": "Supino inclinado com halteres",
+    "primaryMuscle": "chest",
+    "secondaryMuscles": ["shoulders", "triceps"],
+    "equipment": "dumbbell",
+    "instructions": "Ajuste o banco entre 30° e 45°. Com um halter em cada mão na altura do peito, empurre para cima até quase estender os cotovelos e desça controlando o movimento.",
+    "commonMistakes": "Inclinação alta demais transfere carga para o ombro; descer os halteres de forma desalinhada."
+  },
+  {
+    "slug": "crucifixo-maquina",
+    "name": "Crucifixo na máquina (peck deck)",
+    "primaryMuscle": "chest",
+    "secondaryMuscles": ["shoulders"],
+    "equipment": "machine",
+    "instructions": "Sente com as costas apoiadas e antebraços nos apoios. Junte os braços à frente contraindo o peito e retorne controlando até sentir o alongamento.",
+    "commonMistakes": "Usar impulso; retornar rápido demais perdendo tensão."
+  },
+  {
+    "slug": "puxada-frente",
+    "name": "Puxada frontal na polia",
+    "primaryMuscle": "back",
+    "secondaryMuscles": ["biceps", "forearms"],
+    "equipment": "cable",
+    "instructions": "Segure a barra com pegada aberta. Puxe até a parte superior do peito levando os cotovelos para baixo e para trás, contraindo as costas. Retorne controlando.",
+    "commonMistakes": "Puxar atrás da nuca; usar impulso do tronco; puxar com os braços em vez das costas."
+  },
+  {
+    "slug": "remada-curvada-barra",
+    "name": "Remada curvada com barra",
+    "primaryMuscle": "back",
+    "secondaryMuscles": ["biceps", "lowerBack"],
+    "equipment": "barbell",
+    "instructions": "Com o tronco inclinado a cerca de 45° e a coluna neutra, puxe a barra em direção ao abdômen, aproximando as escápulas. Desça controlando.",
+    "commonMistakes": "Arredondar a lombar; usar impulso das pernas; puxar alto demais."
+  },
+  {
+    "slug": "remada-baixa-polia",
+    "name": "Remada baixa na polia",
+    "primaryMuscle": "back",
+    "secondaryMuscles": ["biceps"],
+    "equipment": "cable",
+    "instructions": "Sentado com joelhos levemente flexionados, puxe o triângulo em direção ao abdômen mantendo o tronco estável e as escápulas retraídas.",
+    "commonMistakes": "Balançar o tronco; encolher os ombros."
+  },
+  {
+    "slug": "levantamento-terra",
+    "name": "Levantamento terra",
+    "primaryMuscle": "hamstrings",
+    "secondaryMuscles": ["glutes", "lowerBack", "back"],
+    "equipment": "barbell",
+    "instructions": "Com os pés na largura do quadril e a barra sobre o meio do pé, agache mantendo a coluna neutra, segure a barra e levante estendendo quadril e joelhos juntos até ficar ereto.",
+    "commonMistakes": "Arredondar as costas; afastar a barra do corpo; hiperextender a lombar no topo."
+  },
+  {
+    "slug": "agachamento-livre",
+    "name": "Agachamento livre com barra",
+    "primaryMuscle": "quadriceps",
+    "secondaryMuscles": ["glutes", "hamstrings", "lowerBack"],
+    "equipment": "barbell",
+    "instructions": "Com a barra apoiada no trapézio, pés na largura dos ombros, agache empurrando o quadril para trás até as coxas ficarem ao menos paralelas ao chão, mantendo o tronco firme. Suba empurrando o chão.",
+    "commonMistakes": "Joelhos colapsando para dentro; calcanhar saindo do chão; inclinar o tronco excessivamente."
+  },
+  {
+    "slug": "leg-press",
+    "name": "Leg press 45°",
+    "primaryMuscle": "quadriceps",
+    "secondaryMuscles": ["glutes", "hamstrings"],
+    "equipment": "machine",
+    "instructions": "Posicione os pés na plataforma na largura dos ombros. Desça controlando até formar cerca de 90° nos joelhos e empurre sem travar os joelhos no topo.",
+    "commonMistakes": "Descer demais tirando o quadril do apoio; travar os joelhos; amplitude curta."
+  },
+  {
+    "slug": "cadeira-extensora",
+    "name": "Cadeira extensora",
+    "primaryMuscle": "quadriceps",
+    "secondaryMuscles": [],
+    "equipment": "machine",
+    "instructions": "Sentado com o apoio na canela, estenda os joelhos até quase a extensão completa e retorne controlando.",
+    "commonMistakes": "Usar impulso; retornar rápido demais."
+  },
+  {
+    "slug": "mesa-flexora",
+    "name": "Mesa flexora",
+    "primaryMuscle": "hamstrings",
+    "secondaryMuscles": ["calves"],
+    "equipment": "machine",
+    "instructions": "Deitado, com o apoio acima do calcanhar, flexione os joelhos trazendo os calcanhares em direção aos glúteos e retorne controlando.",
+    "commonMistakes": "Levantar o quadril do apoio; amplitude curta."
+  },
+  {
+    "slug": "desenvolvimento-halteres",
+    "name": "Desenvolvimento com halteres",
+    "primaryMuscle": "shoulders",
+    "secondaryMuscles": ["triceps"],
+    "equipment": "dumbbell",
+    "instructions": "Sentado com as costas apoiadas, halteres na altura dos ombros, empurre para cima até quase estender os cotovelos e desça controlando.",
+    "commonMistakes": "Arquear a lombar; descer pouco; travar os cotovelos com impacto."
+  },
+  {
+    "slug": "elevacao-lateral",
+    "name": "Elevação lateral",
+    "primaryMuscle": "shoulders",
+    "secondaryMuscles": [],
+    "equipment": "dumbbell",
+    "instructions": "Em pé, com halteres ao lado do corpo, eleve os braços lateralmente até a altura dos ombros com leve flexão de cotovelo e desça controlando.",
+    "commonMistakes": "Usar impulso; subir acima da linha dos ombros; encolher o trapézio."
+  },
+  {
+    "slug": "rosca-direta-barra",
+    "name": "Rosca direta com barra",
+    "primaryMuscle": "biceps",
+    "secondaryMuscles": ["forearms"],
+    "equipment": "barbell",
+    "instructions": "Em pé, cotovelos junto ao tronco, flexione os cotovelos levando a barra até os ombros e desça controlando a fase excêntrica.",
+    "commonMistakes": "Balançar o tronco; mover os cotovelos para frente; descer rápido."
+  },
+  {
+    "slug": "rosca-alternada",
+    "name": "Rosca alternada com halteres",
+    "primaryMuscle": "biceps",
+    "secondaryMuscles": ["forearms"],
+    "equipment": "dumbbell",
+    "instructions": "Em pé ou sentado, flexione um braço de cada vez, girando o punho (supinação) durante a subida.",
+    "commonMistakes": "Usar impulso; não controlar a descida."
+  },
+  {
+    "slug": "triceps-corda",
+    "name": "Tríceps na corda (polia alta)",
+    "primaryMuscle": "triceps",
+    "secondaryMuscles": [],
+    "equipment": "cable",
+    "instructions": "Com os cotovelos junto ao corpo, estenda os antebraços para baixo abrindo a corda no final do movimento e retorne controlando.",
+    "commonMistakes": "Afastar os cotovelos do corpo; usar o peso do tronco."
+  },
+  {
+    "slug": "triceps-frances",
+    "name": "Tríceps francês com halter",
+    "primaryMuscle": "triceps",
+    "secondaryMuscles": [],
+    "equipment": "dumbbell",
+    "instructions": "Sentado ou em pé, com o halter acima da cabeça, flexione os cotovelos descendo o peso atrás da cabeça e estenda de volta.",
+    "commonMistakes": "Abrir os cotovelos; mexer os ombros durante o movimento."
+  },
+  {
+    "slug": "elevacao-panturrilha",
+    "name": "Elevação de panturrilha em pé",
+    "primaryMuscle": "calves",
+    "secondaryMuscles": [],
+    "equipment": "machine",
+    "instructions": "Com a ponta dos pés no apoio, eleve os calcanhares o máximo possível e desça alongando bem a panturrilha.",
+    "commonMistakes": "Amplitude curta; usar impulso."
+  },
+  {
+    "slug": "abdominal-prancha",
+    "name": "Prancha abdominal",
+    "primaryMuscle": "abs",
+    "secondaryMuscles": ["lowerBack"],
+    "equipment": "bodyweight",
+    "instructions": "Apoie antebraços e pontas dos pés, mantendo o corpo alinhado da cabeça aos calcanhares, contraindo o abdômen e os glúteos.",
+    "commonMistakes": "Elevar o quadril; deixar a lombar cair; prender a respiração."
+  },
+  {
+    "slug": "abdominal-supra",
+    "name": "Abdominal supra no solo",
+    "primaryMuscle": "abs",
+    "secondaryMuscles": [],
+    "equipment": "bodyweight",
+    "instructions": "Deitado com joelhos flexionados, eleve o tronco contraindo o abdômen sem puxar o pescoço e retorne controlando.",
+    "commonMistakes": "Puxar a cabeça com as mãos; usar impulso; amplitude excessiva na lombar."
+  }
+]
