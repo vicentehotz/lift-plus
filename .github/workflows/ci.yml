@@ -13,19 +13,13 @@ concurrency:
 jobs:
   build-test:
     name: Build & Test (iOS)
-    runs-on: macos-14
-    env:
-      # Combinação conhecida-boa: macos-14 + Xcode 15.4 traz o SDK do iOS 17.
-      # Para atualizar, troque a versão do Xcode e o nome do simulador aqui.
-      XCODE_VERSION: "15.4"
-      SIMULATOR: "iPhone 15"
+    # macos-15 traz o Xcode 16, necessário para abrir o formato de projeto
+    # gerado pelo XcodeGen atual. O deployment target continua iOS 17.
+    runs-on: macos-15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Selecionar Xcode ${{ env.XCODE_VERSION }}
-        run: sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
 
       - name: Versões
         run: |
@@ -38,12 +32,22 @@ jobs:
       - name: Gerar o projeto
         run: xcodegen generate
 
+      - name: Escolher simulador
+        id: sim
+        run: |
+          NAME=$(xcrun simctl list devices available \
+            | grep -Eo 'iPhone [0-9]+( Pro( Max)?)?' \
+            | sort -V | tail -1)
+          NAME=${NAME:-iPhone 16}
+          echo "Simulador selecionado: $NAME"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
       - name: Build & Test
         run: |
           set -o pipefail
           xcodebuild test \
             -scheme LiftPlus \
-            -destination "platform=iOS Simulator,name=${SIMULATOR}" \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}" \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify
