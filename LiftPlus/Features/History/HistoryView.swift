@@ -58,6 +58,11 @@ struct HistoryView: View {
 struct SessionDetailView: View {
     let session: WorkoutSession
 
+    private var allSets: [PerformedSet] { session.sortedItems.flatMap(\.sortedSets) }
+    private var totalSets: Int { allSets.count }
+    private var skippedSets: Int { allSets.filter(\.skipped).count }
+    private var completedSets: Int { totalSets - skippedSets }
+
     var body: some View {
         List {
             Section("Resumo") {
@@ -65,6 +70,10 @@ struct SessionDetailView: View {
                 LabeledContent("Duração", value: Format.duration(session.duration))
                 LabeledContent("Volume total", value: "\(Int(session.totalVolume)) kg")
                 LabeledContent("Descanso real", value: Format.duration(session.totalRestActual))
+                LabeledContent("Séries concluídas", value: "\(completedSets) de \(totalSets)")
+                if skippedSets > 0 {
+                    LabeledContent("Séries puladas", value: "\(skippedSets)")
+                }
             }
             ForEach(session.sortedItems) { item in
                 Section(item.exerciseNameSnapshot) {
