@@ -6,9 +6,19 @@ import SwiftData
 /// (reimportar não duplica) — base do backup manual da v2 (G13).
 @MainActor
 final class ExportServiceTests: XCTestCase {
+    // Retém os containers: o mainContext não mantém o container vivo sozinho,
+    // e um container desalocado deixa o contexto pendurado (crash ao usar).
+    private var containers: [ModelContainer] = []
+
+    override func tearDown() {
+        containers.removeAll()
+        super.tearDown()
+    }
 
     private func makeContext() -> ModelContext {
-        PersistenceController.makeContainer(inMemory: true).mainContext
+        let container = PersistenceController.makeContainer(inMemory: true)
+        containers.append(container)
+        return container.mainContext
     }
 
     /// Cria uma ficha simples com uma sessão concluída no contexto dado.
