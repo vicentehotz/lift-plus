@@ -2,6 +2,8 @@ import Foundation
 import SwiftData
 
 /// Container em memória com dados de exemplo para SwiftUI Previews.
+/// Isolado ao main actor porque acessa `mainContext` (main-actor no iOS 17+).
+@MainActor
 enum PreviewData {
     static let container: ModelContainer = {
         let container = PersistenceController.makeContainer(inMemory: true)

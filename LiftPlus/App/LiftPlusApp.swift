@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
+@MainActor
 struct LiftPlusApp: App {
     let container: ModelContainer
 
