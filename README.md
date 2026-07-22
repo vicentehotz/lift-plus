@@ -1,33 +1,32 @@
 # Lift+
 
-App nativo iOS de controle de treino de academia, **offline-first**. Esta é a
-implementação da **v1** (goals G1–G7 do [plano de desenvolvimento](docs/PLANO-DE-DESENVOLVIMENTO.md)).
+App nativo iOS de controle de treino de academia, **offline-first**. Implementação
+das versões **v1** (goals G1–G7) e **v2** (G8, G13) do
+[plano de desenvolvimento](docs/PLANO-DE-DESENVOLVIMENTO.md).
 
 ## Stack
 
-- Swift 5.10 · SwiftUI · SwiftData · iOS 17+
-- Arquitetura MVVM (Views → ViewModels `@Observable` → serviços de domínio → SwiftData)
-- 100% offline: o store local SwiftData é a única fonte da verdade
-- Schema já desenhado para CloudKit sem migração destrutiva (sync chega na v3)
+- **Swift 5.10+** · **SwiftUI** · **SwiftData** · **Swift Charts** · **iOS 17+**
+- **Arquitetura:** MVVM — Views SwiftUI → ViewModels `@Observable` → serviços de
+  domínio (puros/testáveis) → SwiftData. Views nunca acessam SwiftData direto.
+- **Offline-first:** o store local SwiftData é a única fonte da verdade; o app é
+  100% funcional em modo avião.
+- **CloudKit-ready:** o schema já respeita as restrições do CloudKit (atributos com
+  default, sem `@Attribute(.unique)`, relacionamentos com inverso, `orderIndex`
+  explícito) para o sync da v3 sem migração destrutiva.
 
-## O que a v1 entrega
+## Requisitos
 
-| Goal | Descrição | Onde |
-|------|-----------|------|
-| G1 | Fichas com exercícios (séries, reps, carga, descanso, notas) | `Features/Plans`, `Features/PlanEditor` |
-| G2 | Blocos compostos (bi-set, tri-set, circuito) como unidade de execução/descanso | `WorkoutBlock`, `RunnerStepBuilder` |
-| G3 | Alocação de fichas a dias da semana + agenda | `Features/Schedule` |
-| G4 | Execução com timer de descanso automático e avanço ao próximo item | `Features/Runner`, `RunnerEngine`, `RestTimerService` |
-| G5 | Detalhe do exercício (execução, músculos, erros comuns) via sheet | `Features/ExerciseCatalog/ExerciseDetailSheet` |
-| G6 | Persistência local, funcional em modo avião | `App/PersistenceController` |
-| G7 | Execução com uma mão, 1 toque por série no caminho feliz | `Features/Runner/WorkoutRunnerView` |
+| Ferramenta | Versão | Uso |
+|---|---|---|
+| macOS | 14+ | necessário para compilar/rodar (Xcode só roda em macOS) |
+| Xcode | 16+ | SDK iOS 17+; abre o formato de projeto gerado |
+| XcodeGen | 2.45+ | gera o `.xcodeproj` a partir do `project.yml` |
+| xcbeautify | opcional | formata a saída do `xcodebuild` |
 
-Catálogo de exercícios pré-carregado do bundle: `LiftPlus/Resources/seed_exercises.json`.
+O `.xcodeproj` **não é versionado** — é gerado do `project.yml`.
 
-## Como gerar o projeto e rodar
-
-O `.xcodeproj` não é versionado; é gerado a partir de `project.yml` com
-[XcodeGen](https://github.com/yonaskolb/XcodeGen):
+## Como buildar e rodar
 
 ```bash
 brew install xcodegen
@@ -35,31 +34,77 @@ xcodegen generate
 open LiftPlus.xcodeproj
 ```
 
-Requer Xcode 15+ (SDK iOS 17). Rode no simulador de iPhone ou em dispositivo.
+No Xcode, escolha um simulador de iPhone e aperte **⌘R**. Sem um Mac local, use o
+CI (validação automática) ou um Mac na nuvem + Simulador/TestFlight.
 
-## Testes
-
-Os testes cobrem a máquina de estados da execução (`RunnerEngine`) e o
-achatamento da ficha em passos (`RunnerStepBuilder`) — o núcleo mais crítico da v1:
+### Testes
 
 ```bash
-xcodebuild test -scheme LiftPlus -destination 'platform=iOS Simulator,name=iPhone 15'
+xcodegen generate
+xcodebuild test -scheme LiftPlus \
+  -destination 'platform=iOS Simulator,name=iPhone 16'
 ```
 
-## Estrutura
+Os testes cobrem a lógica de domínio pura — máquina de estados da execução
+(`RunnerEngine`), achatamento da ficha em passos (`RunnerStepBuilder`) e o
+round-trip de export/import (`ExportService`).
+
+### CI
+
+`.github/workflows/ci.yml` roda `xcodegen generate` + `xcodebuild test` num runner
+**macOS** a cada push (qualquer branch), em PRs e sob demanda. É a validação de
+compilação e testes sem depender de um Mac local.
+
+## Estrutura de pastas
 
 ```
-LiftPlus/
-├─ App/            # entrada, container SwiftData, navegação raiz
-├─ Domain/
-│  ├─ Models/      # @Model: plano (ficha) e sessão (histórico)
-│  ├─ Enums/       # BlockKind, MuscleGroup, RestKind, …
-│  └─ Services/    # RunnerEngine, RestTimerService, SeedService
-├─ Features/       # 1 pasta por tela (View + ViewModel)
-├─ UI/             # design system e dados de preview
-└─ Resources/      # seed_exercises.json
-LiftPlusTests/     # testes de unidade
+lift-plus/
+├─ CLAUDE.md                 # regras permanentes do projeto (LEIA PRIMEIRO)
+├─ FEATURES.md               # registro incremental de features
+├─ README.md
+├─ project.yml               # definição do projeto (XcodeGen)
+├─ .github/workflows/ci.yml  # CI (build + testes em macOS)
+├─ docs/                     # plano de desenvolvimento (v1→v3)
+├─ specs/                    # especificações por feature (YYYY-MM-DD-nome.md)
+├─ .claude/
+│  └─ agents/                # subagents do projeto (dev iOS, code review)
+├─ LiftPlus/
+│  ├─ App/                   # entrada, container SwiftData, navegação raiz
+│  ├─ Domain/
+│  │  ├─ Models/             # @Model: plano (ficha) e sessão (histórico)
+│  │  ├─ Enums/              # BlockKind, MuscleGroup, RestKind, …
+│  │  └─ Services/           # RunnerEngine, RestTimerService, SeedService, ExportService
+│  ├─ Features/              # 1 pasta por tela (View + ViewModel)
+│  ├─ UI/                    # design system e dados de preview
+│  └─ Resources/             # seed_exercises.json
+└─ LiftPlusTests/            # testes de unidade
 ```
 
-Acessibilidade: Dark Mode (cores semânticas), Dynamic Type e VoiceOver
-considerados nas telas. Peso armazenado sempre em kg (canônico).
+## Agentes do projeto
+
+Os subagents reutilizáveis ficam em `.claude/agents/` e são acionados via Claude
+Code. Fluxo previsto (detalhes em `CLAUDE.md`):
+
+- **Agente de desenvolvimento iOS** — implementa features seguindo MVVM, Swift
+  moderno, testabilidade, acessibilidade e as guidelines da Apple. Ao trabalhar
+  uma feature, salva o plano em `specs/` e registra a entrada em `FEATURES.md`.
+- **Agente de code review** — valida cada feature implementada contra a sua spec
+  em `specs/`, checando aderência à spec, boas práticas iOS, testes e segurança.
+
+> Os arquivos dos agentes são criados nas fases 3 e 4 desta iniciativa de
+> documentação; esta seção descreve o uso pretendido.
+
+## Regras permanentes
+
+Este projeto segue regras de documentação obrigatórias (ver [`CLAUDE.md`](CLAUDE.md)):
+
+1. Toda feature nova é registrada em [`FEATURES.md`](FEATURES.md) antes ou junto da
+   implementação.
+2. `FEATURES.md` é incremental — entradas nunca são sobrescritas.
+3. Todo plano gerado vira uma spec em [`specs/`](specs/), usada como referência do
+   code review.
+
+## Acessibilidade
+
+Dark Mode (cores semânticas), Dynamic Type e VoiceOver são considerados em toda
+tela. Peso armazenado sempre em kg (canônico); conversão só na apresentação.
