@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="112" fill="#0b0b0f"/>
+  <!-- Halter estilizado -->
+  <g fill="#ff5a2c">
+    <rect x="96" y="232" width="320" height="48" rx="24"/>
+    <rect x="120" y="196" width="44" height="120" rx="20"/>
+    <rect x="348" y="196" width="44" height="120" rx="20"/>
+    <rect x="72" y="216" width="36" height="80" rx="16"/>
+    <rect x="404" y="216" width="36" height="80" rx="16"/>
+  </g>
+  <!-- Sinal de + -->
+  <g fill="#ffffff">
+    <rect x="356" y="120" width="40" height="120" rx="12"/>
+    <rect x="316" y="160" width="120" height="40" rx="12"/>
+  </g>
+</svg>

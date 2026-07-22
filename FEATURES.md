@@ -114,3 +114,15 @@ Campos:
 - **Componentes principais:** `rfcs/`, `.claude/agents/web-developer.md`
 - **Observações:** não substitui F1–F8 no histórico; redireciona o desenvolvimento
   futuro. O agente `ios-developer` fica marcado como substituído por `web-developer`.
+
+### F10 — PWA shell (Fase P0 da migração web)
+- **Descrição:** esqueleto do app web — projeto Vite+React+TypeScript, manifest +
+  service worker (offline, instalável no iPhone), CI em Linux e deploy no GitHub
+  Pages. Base instalável, sem features de produto ainda.
+- **Status:** concluída (validada localmente: typecheck, testes e build verdes)
+- **Spec:** [specs/2026-07-22-pwa-shell-p0.md](specs/2026-07-22-pwa-shell-p0.md)
+- **Data:** 2026-07-22
+- **Componentes principais:** `web/` (Vite/React/TS, `vite-plugin-pwa`),
+  `.github/workflows/web.yml`
+- **Observações:** deriva da RFC-0001. Requer habilitar Pages (origem "GitHub
+  Actions") uma vez nas configurações do repo para o deploy publicar.

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dev-dist/
+
+# Ícones PNG gerados de assets/icon.svg (regenerados no build via npm run gen:icons)
+public/pwa-192x192.png
+public/pwa-512x512.png
+public/apple-touch-icon.png
+
+*.log
+.DS_Store

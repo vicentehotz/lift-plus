@@ -3,7 +3,18 @@ name: CI
 on:
   push:
     branches: ["**"]
+    # App nativo iOS (legado). Não roda o runner macOS em mudanças só de web.
+    paths:
+      - "LiftPlus/**"
+      - "LiftPlusTests/**"
+      - "project.yml"
+      - ".github/workflows/ci.yml"
   pull_request:
+    paths:
+      - "LiftPlus/**"
+      - "LiftPlusTests/**"
+      - "project.yml"
+      - ".github/workflows/ci.yml"
   workflow_dispatch:
 
 concurrency:

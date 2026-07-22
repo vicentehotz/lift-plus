@@ -1,6 +1,6 @@
 # RFC-0001 — Migração para web app (PWA): visão geral e arquitetura
 
-- Status: **rascunho**
+- Status: **aceita** (2026-07-22) — P0 iniciada
 - Data: 2026-07-22
 - Substitui a direção nativa iOS descrita em `docs/PLANO-DE-DESENVOLVIMENTO.md`
   (que permanece como histórico).
