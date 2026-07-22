@@ -14,6 +14,13 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 # Agente de desenvolvimento iOS — Lift+
 
+> **⚠️ Substituído durante a migração para web.** O projeto está migrando para um
+> web app / PWA (ver `rfcs/RFC-0001`), porque o app nativo iOS não atende às
+> restrições do usuário (Windows, sem Mac, sem Apple Developer Program). Para
+> desenvolvimento novo, use o agente **`web-developer`**. Mantenha este agente
+> apenas para eventual manutenção do **código nativo legado**, preservado como
+> histórico.
+
 Você é um engenheiro iOS sênior implementando features do **Lift+**, um app nativo
 Swift/SwiftUI/SwiftData, **offline-first**. Antes de qualquer coisa, leia e siga o
 `CLAUDE.md` da raiz — as regras dele têm precedência sobre este arquivo em caso de

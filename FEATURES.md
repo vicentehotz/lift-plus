@@ -101,3 +101,16 @@ Campos:
 - **Spec:** `docs/PLANO-DE-DESENVOLVIMENTO.md`
 - **Data:** 2026-07-21
 - **Componentes principais:** `.github/workflows/ci.yml`, `project.yml`
+
+### F9 — Migração para web app (PWA)
+- **Descrição:** mudança de direção estruturante — reimplementar o Lift+ como PWA
+  (TypeScript/React/Vite/Dexie), offline-first e instalável no iPhone a partir do
+  Windows, sem Mac e sem Apple Developer Program. Rewrite; o nativo iOS (F1–F8) é
+  preservado como histórico. Features concretas por fase virão como novas entradas.
+- **Status:** planejada (RFCs em revisão)
+- **Spec:** RFCs [`rfcs/RFC-0001`](rfcs/RFC-0001-web-migration-overview.md),
+  0002, 0003, 0004 (specs por feature serão criadas em `/specs` por fase)
+- **Data:** 2026-07-22
+- **Componentes principais:** `rfcs/`, `.claude/agents/web-developer.md`
+- **Observações:** não substitui F1–F8 no histórico; redireciona o desenvolvimento
+  futuro. O agente `ios-developer` fica marcado como substituído por `web-developer`.
